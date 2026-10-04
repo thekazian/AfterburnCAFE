@@ -1,0 +1,50 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AfterburnCAFE.ViewModels"
+        xmlns:models="using:AfterburnCAFE.Models"
+        x:Class="AfterburnCAFE.Views.RunMarkerWindow" x:DataType="vm:RunMarkerViewModel"
+        Title="Afterburn - Run marker" Width="360" Height="540" MinWidth="320" MinHeight="400"
+        Topmost="True" Background="#11151D">
+    <ScrollViewer>
+        <StackPanel Margin="16" Spacing="10">
+            <TextBlock Text="MARK YOUR RUN" FontSize="20" FontWeight="Bold" Foreground="#FF9A42" />
+            <TextBlock Text="{Binding Clock}" />
+            <TextBlock Text="Uses your computer's UTC clock. Keep it synchronized." FontSize="11" TextWrapping="Wrap" Foreground="#B8C2D1" />
+            <TextBlock Text="Pilot" />
+            <ComboBox ItemsSource="{Binding Pilots}" SelectedItem="{Binding Pilot}" HorizontalAlignment="Stretch" />
+            <TextBox Text="{Binding Pilot}" Watermark="Or enter the exact pilot name" />
+            <StackPanel Spacing="8" IsVisible="{Binding !IsRecording}" IsEnabled="{Binding !IsBusy}">
+                <ComboBox ItemsSource="{Binding Activities}" SelectedItem="{Binding Activity}" HorizontalAlignment="Stretch" />
+                <StackPanel Spacing="8" IsVisible="{Binding IsAbyssal}">
+                    <TextBlock Text="Standard Abyssal weather and tier" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                        <ComboBox ItemsSource="{Binding Weathers}" SelectedItem="{Binding Weather}" HorizontalAlignment="Stretch" />
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding Tiers}" SelectedItem="{Binding Tier}" HorizontalAlignment="Stretch" />
+                    </Grid>
+                </StackPanel>
+                <StackPanel Spacing="8" IsVisible="{Binding IsSite}">
+                    <ComboBox ItemsSource="{Binding SitePresets}" SelectedItem="{Binding SelectedPreset}" PlaceholderText="Common sites (optional)" HorizontalAlignment="Stretch" />
+                    <TextBox Text="{Binding SiteName}" Watermark="Exact site or activity name" />
+                    <TextBlock Text="For DED, wormhole, mission or event sites, enter their exact name." FontSize="11" TextWrapping="Wrap" Foreground="#B8C2D1" />
+                </StackPanel>
+                <TextBox Text="{Binding Variant}" Watermark="Variant / fleet mode (optional)" />
+                <TextBox Text="{Binding Notes}" Watermark="Ship, fit or notes (optional)" />
+                <Button Content="Mark entry now" Command="{Binding StartCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+            </StackPanel>
+            <StackPanel IsVisible="{Binding IsRecording}" Spacing="10">
+                <TextBlock Text="{Binding ActiveLabel}" TextWrapping="Wrap" Foreground="#FF9A42" />
+                <Button Content="Mark exit now" Command="{Binding EndCommand}" IsEnabled="{Binding !IsBusy}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+            </StackPanel>
+            <TextBlock Text="{Binding Status}" TextWrapping="Wrap" FontSize="12" />
+            <Expander Header="Saved entries">
+                <ListBox ItemsSource="{Binding Entries}" MaxHeight="200">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:RunMarker">
+                            <TextBlock Text="{Binding Display}" TextWrapping="Wrap" FontSize="12" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Expander>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

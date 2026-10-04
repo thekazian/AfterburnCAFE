@@ -1,0 +1,121 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AfterburnCAFE.ViewModels"
+        xmlns:models="using:AfterburnCAFE.Models"
+        x:Class="AfterburnCAFE.Views.MainWindow" x:DataType="vm:MainViewModel"
+        Width="1280" Height="820" MinWidth="850" MinHeight="560"
+        Title="Afterburn - Combat Analytics For EVE" Background="#11151D">
+    <Grid RowDefinitions="Auto,*,Auto" Margin="24" RowSpacing="20">
+        <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Spacing="4">
+                <TextBlock Text="AFTERBURN" FontSize="30" FontWeight="Bold" Foreground="#FF9A42" />
+                <TextBlock Text="Combat Analytics For EVE" Foreground="#B8C2D1" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <Button Content="Run marker" Click="OpenRunMarker_Click" />
+                <Button Content="Refresh game logs" Command="{Binding FindLogsCommand}" />
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1" ColumnDefinitions="310,*" ColumnSpacing="20">
+            <Border Background="#202632" CornerRadius="12" Padding="12">
+                <Grid RowDefinitions="Auto,Auto,*" RowSpacing="10">
+                    <TextBlock Text="RUNS" FontWeight="Bold" Margin="8" />
+                    <TextBlock Grid.Row="1" Text="Estimated combat instances" Foreground="#B8C2D1" Margin="8,0" />
+                    <ListBox Grid.Row="2" ItemsSource="{Binding Runs}" SelectedItem="{Binding SelectedRun}" Background="Transparent">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:CombatRun">
+                                <StackPanel Spacing="5" Margin="4,8">
+                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding Subtitle}" FontSize="12" Foreground="#B8C2D1" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+            <Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="10">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                    <TextBlock x:Name="CopyStatus" VerticalAlignment="Center" FontSize="12" Foreground="#B8C2D1" />
+                    <Button Content="Copy as Markdown" Click="CopyMarkdown_Click"
+                            IsEnabled="{Binding SelectedRun, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                </StackPanel>
+            <Border Grid.Row="1" Background="#202632" CornerRadius="12" Padding="24">
+                <Grid>
+                    <TextBlock Text="Select a run to explore. Runs appear after logs are scanned." TextWrapping="Wrap" IsVisible="{Binding SelectedRun, Converter={x:Static ObjectConverters.IsNull}}" />
+                    <ContentControl Content="{Binding SelectedRun}" IsVisible="{Binding SelectedRun, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate x:DataType="models:CombatRun">
+                                <Grid RowDefinitions="Auto,Auto,Auto,*" RowSpacing="12">
+                                    <StackPanel Spacing="6">
+                                        <TextBlock Text="{Binding Title}" FontSize="24" FontWeight="Bold" />
+                                        <TextBlock Text="{Binding Pilot}" Foreground="#FF9A42" />
+                                        <TextBlock Text="{Binding TimeRange}" />
+                                        <TextBlock Text="{Binding BoundaryNote}" TextWrapping="Wrap" FontSize="12" Foreground="#B8C2D1" />
+                                        <TextBlock Text="{Binding MarkerDetails}" TextWrapping="Wrap" FontSize="12" Foreground="#FF9A42" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="1" Spacing="6">
+                                        <TextBlock Text="{Binding DamageSummary}" FontSize="20" TextWrapping="Wrap" />
+                                        <TextBlock Text="{Binding ActivitySummary}" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="2" Text="{Binding Source}" FontSize="11" TextWrapping="Wrap" Foreground="#B8C2D1" />
+                                    <TabControl Grid.Row="3" TabStripPlacement="Left">
+                                        <TabItem Header="Metrics">
+                                            <ScrollViewer>
+                                                <ItemsControl ItemsSource="{Binding Analytics.Metrics}" Margin="12">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate x:DataType="models:MetricRow">
+                                                            <StackPanel Spacing="5" Margin="0,0,0,18">
+                                                                <TextBlock Text="{Binding Metric}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                                                <TextBlock Text="{Binding Value}" FontSize="20" Foreground="#FF9A42" TextWrapping="Wrap" />
+                                                                <TextBlock Text="{Binding Note}" FontSize="12" Foreground="#B8C2D1" TextWrapping="Wrap" />
+                                                            </StackPanel>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </ScrollViewer>
+                                        </TabItem>
+                                        <TabItem Header="Timeline">
+                                            <ListBox ItemsSource="{Binding Events}" Background="Transparent">
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate x:DataType="models:GameEvent">
+                                                        <TextBlock Text="{Binding Display}" TextWrapping="Wrap" FontSize="12" />
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                            </ListBox>
+                                        </TabItem>
+                                        <TabItem Header="Targets">
+                                            <ScrollViewer><TextBlock Text="{Binding Analytics.TargetReport}" TextWrapping="Wrap" Margin="12" /></ScrollViewer>
+                                        </TabItem>
+                                        <TabItem Header="Incoming sources">
+                                            <ScrollViewer><TextBlock Text="{Binding Analytics.SourceReport}" TextWrapping="Wrap" Margin="12" /></ScrollViewer>
+                                        </TabItem>
+                                        <TabItem Header="Weapons">
+                                            <ScrollViewer><TextBlock Text="{Binding Analytics.WeaponReport}" TextWrapping="Wrap" Margin="12" /></ScrollViewer>
+                                        </TabItem>
+                                        <TabItem Header="Hit quality">
+                                            <ScrollViewer><TextBlock Text="{Binding Analytics.QualityReport}" TextWrapping="Wrap" Margin="12" /></ScrollViewer>
+                                        </TabItem>
+                                        <TabItem Header="Engagements">
+                                            <ScrollViewer><TextBlock Text="{Binding Analytics.EngagementReport}" TextWrapping="Wrap" Margin="12" /></ScrollViewer>
+                                        </TabItem>
+                                        <TabItem Header="Personal baseline">
+                                            <ScrollViewer><TextBlock Text="{Binding Baseline}" TextWrapping="Wrap" Margin="12" /></ScrollViewer>
+                                        </TabItem>
+                                        <TabItem Header="Data coverage">
+                                            <ScrollViewer><TextBlock Text="{Binding Analytics.CoverageReport}" TextWrapping="Wrap" Margin="12" /></ScrollViewer>
+                                        </TabItem>
+                                    </TabControl>
+                                </Grid>
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+                </Grid>
+            </Border>
+            </Grid>
+        </Grid>
+        <StackPanel Grid.Row="2" Spacing="6">
+            <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsScanning}" Height="3" />
+            <TextBlock Text="{Binding LogFolderStatus}" TextWrapping="Wrap" FontSize="12" Foreground="#B8C2D1" />
+        </StackPanel>
+    </Grid>
+</Window>
