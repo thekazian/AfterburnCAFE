@@ -10,7 +10,7 @@ Built with C#, .NET 9, Avalonia UI 11.3.21, and CommunityToolkit.Mvvm. Log disco
 
 [Download AfterburnCAFE.exe (Windows x64)](https://github.com/thekazian/AfterburnCAFE/releases/latest/download/AfterburnCAFE.exe)
 
-The download link becomes available when the first public GitHub Release containing `AfterburnCAFE.exe` is published. It does not point to a download yet.
+The download link points to the latest published Windows x64 release.
 
 The portable executable includes .NET; users do not need to install an SDK or runtime. Download and run it on 64-bit Windows. It is currently unsigned, so Windows may show a publisher or reputation prompt. Manual run markers are stored in your local application data, not alongside the executable.
 
@@ -135,3 +135,4 @@ docs/
 ```
 
 Build output, IDE user files, and local environment files are excluded by `.gitignore`. Real game logs and marker data should remain outside the repository.
+
