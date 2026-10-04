@@ -486,6 +486,9 @@ $RECYCLE.BIN/
 # Avalonia generated build-service files
 **/AvaloniaUI/BuildServices/
 
+# Standalone distribution artifacts
+artifacts/
+
 # Local credentials and agent state
 .aws/
 .codex/

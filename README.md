@@ -6,7 +6,15 @@ Afterburn is a desktop application for reviewing EVE Online combat logs. It grou
 
 Built with C#, .NET 9, Avalonia UI 11.3.21, and CommunityToolkit.Mvvm. Log discovery currently focuses on Windows Documents locations.
 
-## Quick start
+## Download for Windows
+
+[Download AfterburnCAFE.exe (Windows x64)](https://github.com/thekazian/AfterburnCAFE/releases/latest/download/AfterburnCAFE.exe)
+
+The download link becomes available when the first public GitHub Release containing `AfterburnCAFE.exe` is published. It does not point to a download yet.
+
+The portable executable includes .NET; users do not need to install an SDK or runtime. Download and run it on 64-bit Windows. It is currently unsigned, so Windows may show a publisher or reputation prompt. Manual run markers are stored in your local application data, not alongside the executable.
+
+## Build from source
 
 Install the .NET 9 SDK or a compatible newer SDK. From the repository root:
 
@@ -103,6 +111,16 @@ dotnet run --project tests/AfterburnCAFE.ParserChecks
 ```
 
 The dependency-free check executable verifies parsing, damage totals, segmentation, timing/DPS calculations, quality buckets and baselines, plus marker persistence and matching. It also scans locally available logs for basic consistency. It creates temporary marker fixtures and removes them after the checks. It does not require real logs to pass and does not test the graphical UI or OS clipboard.
+
+### Build the standalone Windows executable
+
+```powershell
+dotnet publish src/AfterburnCAFE/AfterburnCAFE.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishTrimmed=false -p:DebugType=None -p:DebugSymbols=false -o artifacts/publish/win-x64
+```
+
+Output: `artifacts/publish/win-x64/AfterburnCAFE.exe`. Native libraries are bundled and extracted by .NET at runtime. Trimming is disabled to preserve Avalonia's reflection-based functionality.
+
+To make the download link live, publish a GitHub Release and attach this file with the exact asset name `AfterburnCAFE.exe`. Attach a SHA-256 checksum as well. Keep binaries in Releases rather than committing them into Git. The `/releases/latest/download/` link follows the latest full release; draft and prerelease uploads do not activate it.
 
 ```text
 AfterburnCAFE.sln
