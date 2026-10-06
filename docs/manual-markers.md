@@ -2,9 +2,9 @@
 
 Open **Run marker** in the main window. The separate movable window stays on top while Afterburn is open. Close the marker window to hide it; saved and active entries persist. Closing Afterburn closes its marker window without silently ending active entries.
 
-1. Select or type the exact pilot name used in the EVE game-log header.
+1. Select a pilot from the dropdown. Choices come from scanned runs and saved marker entries.
 2. Choose Combat site, Abyssal Deadspace, or Other / custom.
-3. For standard Abyssal Deadspace, choose weather and tier. For other activities, choose a common site preset or enter an exact name. Variant / fleet mode and notes are optional.
+3. For Combat site, select rat faction, site type, and modifier (Base, Hidden, Forsaken, Forlorn). Rogue Drones uses the equivalent names from the supplied site chart. Base adds no modifier to the saved name. For standard Abyssal Deadspace, choose weather and tier. Other / custom accepts an exact activity name. Variant / fleet mode and notes are optional.
 4. Click **Mark entry now** as you enter, then **Mark exit now** as you leave. These record the click time, not the completion of a disk write. An exit means you marked leaving; it does not certify a successful completion.
 
 The clock is `DateTime.UtcNow`, displayed as EVE time (UTC). It is not synchronized to CCP servers or read from the client. Keep Windows time synchronized; entry/exit precision also depends on when you click. No game inputs, memory access, client modifications, or network interception are used.
@@ -17,7 +17,7 @@ Scanning annotates combat runs by exact pilot name (case-insensitive) and overla
 
 Standard Abyssal Deadspace has seven tiers (T0 Tranquil, T1 Calm, T2 Agitated, T3 Fierce, T4 Raging, T5 Chaotic, T6 Cataclysmic) and five weathers (Dark, Electrical, Exotic, Firestorm, Gamma): 35 tier/weather labels. Fleet mode is independent optional metadata, and the encountered NPC mix is not selected in advance. Special event filaments are recorded under Other / custom rather than forced into this standard catalog.
 
-Combat sites use common full-name presets plus a free-text fallback. This is not an exhaustive catalog or an unrestricted faction/type cross-product. DED sites, missions, wormholes, events, and different spawn variants need their own names and context. For example, Angel Sanctum has Ring/Station variants; record that in the variant field if known.
+Combat-site selectors follow the user-supplied ten-tier chart, with separate faction and modifier choices. The resulting names are manual annotations, not validation that every faction/site/modifier combination exists in EVE. Sleepers / Drifters selections are descriptive tags; exact wormhole-site names can be recorded under Other / custom. DED sites, missions, events, and different spawn variants can also use custom names and context. For example, Angel Sanctum has Ring/Station variants; record that in the variant field if known.
 
 Sources checked October 4, 2026:
 

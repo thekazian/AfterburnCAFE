@@ -16,25 +16,28 @@ public partial class RunMarkerViewModel : ViewModelBase
     public string[] Activities { get; } = { "Combat site", "Abyssal Deadspace", "Other / custom" };
     public string[] Weathers { get; } = { "Dark", "Electrical", "Exotic", "Firestorm", "Gamma" };
     public string[] Tiers { get; } = { "T0 - Tranquil", "T1 - Calm", "T2 - Agitated", "T3 - Fierce", "T4 - Raging", "T5 - Chaotic", "T6 - Cataclysmic" };
-    public string[] SitePresets { get; } =
-    {
-        "Angel Sanctum", "Angel Haven", "Blood Sanctum", "Blood Haven", "Guristas Sanctum", "Guristas Haven",
-        "Sansha Sanctum", "Sansha Haven", "Serpentis Sanctum", "Serpentis Haven", "Drone Horde", "Drone Patrol"
-    };
+    public string[] RatTypes { get; } = { "Angel Cartel", "Guristas Pirates", "Serpentis", "Sansha's Nation", "Blood Raiders", "Rogue Drones", "Sleepers / Drifters" };
+    public string[] Modifiers { get; } = { "Base", "Hidden", "Forsaken", "Forlorn" };
+    public string[] SiteTypes => RatType == "Rogue Drones"
+        ? new[] { "Drone Gathering", "Drone Cluster", "Drone Assembly", "Drone Menagerie", "Drone Herd", "Drone Squad", "Drone Patrol", "Drone Depths", "Outgrowth Drone Hive", "Drone Ordeal" }
+        : new[] { "Burrow", "Hideaway", "Refuge", "Den", "Yard", "Rally Point", "Port", "Hub", "Haven", "Sanctum" };
     public ObservableCollection<string> Pilots { get; } = new();
     public ObservableCollection<RunMarker> Entries { get; } = new();
     public event Action? MarkersChanged;
 
     [ObservableProperty] private string _pilot = "";
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsAbyssal), nameof(IsSite))]
+    [NotifyPropertyChangedFor(nameof(IsAbyssal), nameof(IsSite), nameof(IsCustom))]
     private string _activity = "Combat site";
     public bool IsAbyssal => Activity == "Abyssal Deadspace";
-    public bool IsSite => !IsAbyssal;
+    public bool IsSite => Activity == "Combat site";
+    public bool IsCustom => Activity == "Other / custom";
     [ObservableProperty] private string _weather = "Exotic";
     [ObservableProperty] private string _tier = "T3 - Fierce";
     [ObservableProperty] private string _siteName = "Angel Sanctum";
-    [ObservableProperty] private string? _selectedPreset;
+    [ObservableProperty] private string _ratType = "Angel Cartel";
+    [ObservableProperty] private string _siteType = "Sanctum";
+    [ObservableProperty] private string _modifier = "Base";
     [ObservableProperty] private string _variant = "";
     [ObservableProperty] private string _notes = "";
     [ObservableProperty] private string _status = "Mark entry when you enter; mark exit when you leave.";
@@ -51,7 +54,15 @@ public partial class RunMarkerViewModel : ViewModelBase
         Tick();
     }
 
-    partial void OnSelectedPresetChanged(string? value) { if (value is not null) SiteName = value; }
+    partial void OnRatTypeChanged(string value)
+    {
+        var oldIndex = Array.IndexOf(value == "Rogue Drones"
+            ? new[] { "Burrow", "Hideaway", "Refuge", "Den", "Yard", "Rally Point", "Port", "Hub", "Haven", "Sanctum" }
+            : new[] { "Drone Gathering", "Drone Cluster", "Drone Assembly", "Drone Menagerie", "Drone Herd", "Drone Squad", "Drone Patrol", "Drone Depths", "Outgrowth Drone Hive", "Drone Ordeal" }, SiteType);
+        var next = SiteTypes.Contains(SiteType) ? SiteType : SiteTypes[Math.Max(0, oldIndex)];
+        OnPropertyChanged(nameof(SiteTypes));
+        SiteType = next;
+    }
     partial void OnPilotChanged(string value) => UpdateActive();
 
     public void Tick()
@@ -75,6 +86,9 @@ public partial class RunMarkerViewModel : ViewModelBase
             var entries = await Task.Run(_store.Load);
             Entries.Clear();
             foreach (var entry in entries) Entries.Add(entry);
+            foreach (var pilot in entries.Select(e => e.Pilot).Distinct())
+                if (!Pilots.Contains(pilot)) Pilots.Add(pilot);
+            if (string.IsNullOrWhiteSpace(Pilot) && Pilots.Count > 0) Pilot = Pilots[0];
             UpdateActive();
         }
         catch (Exception ex) { Status = $"Could not load entries: {ex.Message}"; }
@@ -84,7 +98,16 @@ public partial class RunMarkerViewModel : ViewModelBase
     private async Task StartAsync()
     {
         var now = DateTime.UtcNow; // Capture click time before disk I/O.
-        var label = IsAbyssal ? $"{Weather} {Tier.Split(' ')[0]} Abyssal" : SiteName;
+        var prefix = RatType switch
+        {
+            "Angel Cartel" => "Angel", "Guristas Pirates" => "Guristas",
+            "Sansha's Nation" => "Sansha", "Blood Raiders" => "Blood",
+            "Rogue Drones" => "", "Sleepers / Drifters" => "Sleepers / Drifters -",
+            _ => RatType
+        };
+        var label = IsAbyssal ? $"{Weather} {Tier.Split(' ')[0]} Abyssal"
+            : IsSite ? string.Join(" ", new[] { prefix, Modifier == "Base" ? "" : Modifier, SiteType }.Where(s => !string.IsNullOrWhiteSpace(s)))
+            : SiteName;
         var pilot = Pilot; var activity = Activity; var variant = Variant; var notes = Notes;
         IsBusy = true;
         try

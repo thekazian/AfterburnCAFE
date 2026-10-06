@@ -12,7 +12,6 @@
             <TextBlock Text="Uses your computer's UTC clock. Keep it synchronized." FontSize="11" TextWrapping="Wrap" Foreground="#B8C2D1" />
             <TextBlock Text="Pilot" />
             <ComboBox ItemsSource="{Binding Pilots}" SelectedItem="{Binding Pilot}" HorizontalAlignment="Stretch" />
-            <TextBox Text="{Binding Pilot}" Watermark="Or enter the exact pilot name" />
             <StackPanel Spacing="8" IsVisible="{Binding !IsRecording}" IsEnabled="{Binding !IsBusy}">
                 <ComboBox ItemsSource="{Binding Activities}" SelectedItem="{Binding Activity}" HorizontalAlignment="Stretch" />
                 <StackPanel Spacing="8" IsVisible="{Binding IsAbyssal}">
@@ -23,7 +22,14 @@
                     </Grid>
                 </StackPanel>
                 <StackPanel Spacing="8" IsVisible="{Binding IsSite}">
-                    <ComboBox ItemsSource="{Binding SitePresets}" SelectedItem="{Binding SelectedPreset}" PlaceholderText="Common sites (optional)" HorizontalAlignment="Stretch" />
+                    <TextBlock Text="Rat type" />
+                    <ComboBox ItemsSource="{Binding RatTypes}" SelectedItem="{Binding RatType}" HorizontalAlignment="Stretch" />
+                    <TextBlock Text="Site type" />
+                    <ComboBox ItemsSource="{Binding SiteTypes}" SelectedItem="{Binding SiteType}" HorizontalAlignment="Stretch" />
+                    <TextBlock Text="Modifier" />
+                    <ComboBox ItemsSource="{Binding Modifiers}" SelectedItem="{Binding Modifier}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+                <StackPanel Spacing="8" IsVisible="{Binding IsCustom}">
                     <TextBox Text="{Binding SiteName}" Watermark="Exact site or activity name" />
                     <TextBlock Text="For DED, wormhole, mission or event sites, enter their exact name." FontSize="11" TextWrapping="Wrap" Foreground="#B8C2D1" />
                 </StackPanel>

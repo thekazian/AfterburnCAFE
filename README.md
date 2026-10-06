@@ -56,8 +56,8 @@ Select a run in the left sidebar to explore:
 
 Click **Run marker** to open a movable, always-on-top window:
 
-1. Select or type the exact pilot name from the game-log header.
-2. Choose a combat site preset, enter a custom activity name, or select standard Abyssal weather and tier.
+1. Select the pilot from the dropdown.
+2. For combat sites, choose rat faction, site type, and Base/Hidden/Forsaken/Forlorn modifier. Alternatively, enter a custom activity name or select standard Abyssal weather and tier.
 3. Optionally record a variant, fleet mode, ship/fit, or other notes.
 4. Click **Mark entry now** when you enter and **Mark exit now** when you leave.
 
